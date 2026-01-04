@@ -45,48 +45,48 @@
 ## Phase 2: AI & Knowledge (Day 2)
 
 ### 2.1 Vercel AI SDK 集成
-- [ ] 安装 Vercel AI SDK
-- [ ] 配置 Claude 3.5 Sonnet API 密钥
-- [ ] 配置 Groq/Llama 3 API 密钥（用于快速意图识别）
-- [ ] 创建基础聊天 API 路由（/api/chat）
-- [ ] 实现流式响应处理
-- [ ] 实现消息历史管理
-- [ ] 集成模式切换（agent/client 模式）
-- [ ] 测试流式对话功能
-- [ ] 优化首字响应时间（TTFT < 800ms）
+- [x] 安装 Vercel AI SDK
+- [x] 配置 Claude 3.5 Sonnet API 密钥 - 需要用户在 .env.local 中设置 ANTHROPIC_API_KEY
+- [ ] 配置 Groq/Llama 3 API 密钥（用于快速意图识别）- 可选，当前使用 Claude
+- [x] 创建基础聊天 API 路由（/api/chat）
+- [x] 实现流式响应处理
+- [x] 实现消息历史管理 - 使用 useChat hook
+- [x] 集成模式切换（agent/client 模式）
+- [ ] 测试流式对话功能 - 需要 API 密钥配置后测试
+- [ ] 优化首字响应时间（TTFT < 800ms）- 需要实际测试优化
 
 ### 2.2 编写 Embedding 脚本与 Vector Search RPC
-- [ ] 安装 OpenAI Embedding API 客户端
-- [ ] 创建 embedding 生成函数（使用 text-embedding-ada-002 或类似模型）
-- [ ] 编写知识库文档处理脚本
+- [x] 安装 OpenAI Embedding API 客户端
+- [x] 创建 embedding 生成函数（使用 text-embedding-ada-002 或类似模型）
+- [ ] 编写知识库文档处理脚本 - 待实现
   - [ ] PDF 解析和分块
   - [ ] 文本预处理
   - [ ] 生成 embedding 向量
   - [ ] 存储到 kb_chunks 表
-- [ ] 创建 Supabase RPC 函数用于向量相似度搜索
-  - [ ] 实现相似度阈值过滤（> 0.75）
-  - [ ] 返回前 4 条最相似结果
-- [ ] 创建 /api/ingest 端点（管理员上传并向量化）
-- [ ] 测试向量搜索功能
+- [x] 创建 Supabase RPC 函数用于向量相似度搜索 - 已在迁移文件中创建 match_kb_chunks
+  - [x] 实现相似度阈值过滤（> 0.75）
+  - [x] 返回前 4 条最相似结果
+- [ ] 创建 /api/ingest 端点（管理员上传并向量化）- 待实现
+- [ ] 测试向量搜索功能 - 需要 API 密钥配置后测试
 
 ### 2.3 集成 Jina Reader 实现实时网页上下文抓取
-- [ ] 注册并配置 Jina Reader API
-- [ ] 创建 /api/scrape 端点
-- [ ] 实现 URL 抓取功能
-- [ ] 实现 Markdown 格式转换
-- [ ] 处理 HDB/URA 官网特定格式
-- [ ] 实现错误处理和重试机制
-- [ ] 测试网页抓取功能
-- [ ] 集成到 RAG 检索流程中
+- [x] 注册并配置 Jina Reader API - 需要用户在 .env.local 中设置 JINA_API_KEY
+- [x] 创建 /api/scrape 端点
+- [x] 实现 URL 抓取功能
+- [x] 实现 Markdown 格式转换
+- [x] 处理 HDB/URA 官网特定格式 - 已实现政府网站检测
+- [x] 实现错误处理和重试机制
+- [ ] 测试网页抓取功能 - 需要 API 密钥配置后测试
+- [x] 集成到 RAG 检索流程中
 
 ### 2.4 RAG 检索流水线实现
-- [ ] 实现意图识别逻辑（检测 "Policy" 或 "Procedure" 关键词）
-- [ ] 集成向量搜索到聊天流程
-- [ ] 实现上下文注入机制
-- [ ] 实现引用透明功能
-  - [ ] AI 回复包含 [1][2] 脚注
-  - [ ] 显示 sources 列表
-- [ ] 测试完整 RAG 流程
+- [x] 实现意图识别逻辑（检测 "Policy" 或 "Procedure" 关键词）
+- [x] 集成向量搜索到聊天流程
+- [x] 实现上下文注入机制
+- [x] 实现引用透明功能
+  - [x] AI 回复包含 [1][2] 脚注 - 通过 system prompt 实现
+  - [x] 显示 sources 列表 - 在聊天界面底部显示
+- [ ] 测试完整 RAG 流程 - 需要 API 密钥配置后测试
 
 ## Phase 3: Business Logic (Day 3)
 
