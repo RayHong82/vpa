@@ -10,11 +10,19 @@ const nextConfig: NextConfig = {
     },
   },
   // Ensure path aliases work in Vercel
-  webpack: (config) => {
+  webpack: (config, { isServer }) => {
+    // Resolve path aliases
     config.resolve.alias = {
       ...config.resolve.alias,
-      '@': path.resolve(__dirname),
+      '@': path.resolve(__dirname, '.'),
     }
+    
+    // Ensure proper module resolution
+    config.resolve.modules = [
+      path.resolve(__dirname, '.'),
+      'node_modules',
+    ]
+    
     return config
   },
 }

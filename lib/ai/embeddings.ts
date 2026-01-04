@@ -1,8 +1,15 @@
 import OpenAI from 'openai'
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-})
+/**
+ * Get OpenAI client instance
+ */
+function getOpenAIClient() {
+  const apiKey = process.env.OPENAI_API_KEY
+  if (!apiKey) {
+    throw new Error('OPENAI_API_KEY is not set')
+  }
+  return new OpenAI({ apiKey })
+}
 
 /**
  * Generate embedding vector for text using OpenAI
@@ -10,9 +17,7 @@ const openai = new OpenAI({
  * @returns Embedding vector (1536 dimensions)
  */
 export async function generateEmbedding(text: string): Promise<number[]> {
-  if (!process.env.OPENAI_API_KEY) {
-    throw new Error('OPENAI_API_KEY is not set')
-  }
+  const openai = getOpenAIClient()
 
   const response = await openai.embeddings.create({
     model: 'text-embedding-ada-002',
@@ -26,9 +31,7 @@ export async function generateEmbedding(text: string): Promise<number[]> {
  * Generate embeddings for multiple texts
  */
 export async function generateEmbeddings(texts: string[]): Promise<number[][]> {
-  if (!process.env.OPENAI_API_KEY) {
-    throw new Error('OPENAI_API_KEY is not set')
-  }
+  const openai = getOpenAIClient()
 
   const response = await openai.embeddings.create({
     model: 'text-embedding-ada-002',
