@@ -6,8 +6,4 @@ node_modules
 .DS_Store
 .git
 .gitignore
-README.md
-*.md
-scripts/
-supabase/
 
