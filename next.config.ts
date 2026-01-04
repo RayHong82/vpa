@@ -9,37 +9,20 @@ const nextConfig: NextConfig = {
       bodySizeLimit: '2mb',
     },
   },
-  // Configure webpack to resolve path aliases - critical for Vercel
-  webpack: (config, { dir, isServer }) => {
-    // Use the build directory which is more reliable in Vercel
-    const projectRoot = path.resolve(dir || process.cwd())
+  // Critical: Configure webpack to resolve @ alias for Vercel
+  webpack: (config, { dir }) => {
+    // Use dir parameter which is the project root in Vercel builds
+    const projectRoot = dir || path.resolve(process.cwd())
     
-    // Force override the alias
-    if (!config.resolve) {
-      config.resolve = {}
-    }
-    
+    // Override alias - must be absolute path
+    config.resolve = config.resolve || {}
     config.resolve.alias = {
-      ...(config.resolve.alias || {}),
+      ...config.resolve.alias,
       '@': projectRoot,
     }
-    
-    // Ensure extensions include .ts and .tsx
-    if (!config.resolve.extensions) {
-      config.resolve.extensions = []
-    }
-    const extensions = new Set([
-      ...config.resolve.extensions,
-      '.ts',
-      '.tsx',
-      '.js',
-      '.jsx',
-    ])
-    config.resolve.extensions = Array.from(extensions)
     
     return config
   },
 }
 
 export default nextConfig
-
