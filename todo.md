@@ -3,44 +3,44 @@
 ## Phase 1: Foundation (Day 1)
 
 ### 1.1 Next.js 15 初始化 & Shadcn 定制
-- [ ] 初始化 Next.js 15 项目（使用 App Router）
-- [ ] 配置 TypeScript
-- [ ] 安装并配置 Tailwind CSS
-- [ ] 安装 Shadcn/UI 并初始化
-- [ ] 配置 Shadcn/UI 使用 Apple Design Language 主题
-- [ ] 设置 Framer Motion 动画库
-- [ ] 配置项目基础目录结构（app/, components/, lib/, types/）
-- [ ] 设置环境变量管理（.env.local）
+- [x] 初始化 Next.js 15 项目（使用 App Router）
+- [x] 配置 TypeScript
+- [x] 安装并配置 Tailwind CSS
+- [x] 安装 Shadcn/UI 并初始化
+- [x] 配置 Shadcn/UI 使用 Apple Design Language 主题
+- [x] 设置 Framer Motion 动画库
+- [x] 配置项目基础目录结构（app/, components/, lib/, types/）
+- [x] 设置环境变量管理（.env.local）- 已创建配置说明，需要用户添加实际文件
 
 ### 1.2 Supabase DB Schema 迁移
-- [ ] 创建 Supabase 项目并获取连接信息
-- [ ] 安装 Supabase CLI 并配置本地开发环境
-- [ ] 创建 profiles 表（包含 id, full_name, role, team_id, created_at）
-- [ ] 创建 kb_chunks 表（包含 id, team_id, content, metadata, embedding）
-- [ ] 创建 calculation_history 表（包含 id, user_id, input_data, results, created_at）
-- [ ] 配置 pgvector 扩展用于向量搜索
-- [ ] 创建必要的索引（team_id, user_id, embedding 向量索引）
-- [ ] 设置 Row Level Security (RLS) 策略
-  - [ ] profiles 表 RLS 策略
-  - [ ] kb_chunks 表 RLS 策略（确保团队数据隔离）
-  - [ ] calculation_history 表 RLS 策略
-- [ ] 创建数据库迁移文件
-- [ ] 测试数据库连接和查询
+- [x] 创建 Supabase 项目并获取连接信息 - 需要用户在 Supabase Dashboard 创建项目
+- [x] 安装 Supabase CLI 并配置本地开发环境 - 已提供 SQL 迁移文件，CLI 可选
+- [x] 创建 profiles 表（包含 id, full_name, role, team_id, created_at）
+- [x] 创建 kb_chunks 表（包含 id, team_id, content, metadata, embedding）
+- [x] 创建 calculation_history 表（包含 id, user_id, input_data, results, created_at）
+- [x] 配置 pgvector 扩展用于向量搜索
+- [x] 创建必要的索引（team_id, user_id, embedding 向量索引）
+- [x] 设置 Row Level Security (RLS) 策略
+  - [x] profiles 表 RLS 策略
+  - [x] kb_chunks 表 RLS 策略（确保团队数据隔离）
+  - [x] calculation_history 表 RLS 策略
+- [x] 创建数据库迁移文件 - 已创建 3 个迁移文件
+- [ ] 测试数据库连接和查询 - 需要用户在 Supabase Dashboard 运行迁移后测试
 
 ### 1.3 苹果风格 Layout 与侧边栏/Dock 实现
-- [ ] 设计并实现主 Layout 组件
-- [ ] 实现苹果风格色彩系统（Light/Dark 模式）
-  - [ ] 配置背景色：Light (#FFFFFF), Dark (#000000)
-  - [ ] 配置次要色：iOS Gray (#F5F5F7)
-- [ ] 实现对话框组件（使用 backdrop-blur-xl bg-white/80）
-- [ ] 实现列表项交互效果（scale: 0.98 缩放反馈）
-- [ ] 创建底部固定 Dock 组件
-  - [ ] Dock 半透明效果
-  - [ ] 三个主要入口：聊天、规划器、设置
-  - [ ] 图标和导航逻辑
-- [ ] 实现侧边栏组件（如需要）
-- [ ] 响应式设计（移动端适配）
-- [ ] 集成 Framer Motion 动画效果
+- [x] 设计并实现主 Layout 组件
+- [x] 实现苹果风格色彩系统（Light/Dark 模式）
+  - [x] 配置背景色：Light (#FFFFFF), Dark (#000000)
+  - [x] 配置次要色：iOS Gray (#F5F5F7)
+- [ ] 实现对话框组件（使用 backdrop-blur-xl bg-white/80）- 样式已准备，组件待实现
+- [x] 实现列表项交互效果（scale: 0.98 缩放反馈）
+- [x] 创建底部固定 Dock 组件
+  - [x] Dock 半透明效果
+  - [x] 三个主要入口：聊天、规划器、设置
+  - [x] 图标和导航逻辑
+- [ ] 实现侧边栏组件（如需要）- 当前未实现，根据需求决定
+- [x] 响应式设计（移动端适配）
+- [x] 集成 Framer Motion 动画效果
 
 ## Phase 2: AI & Knowledge (Day 2)
 
@@ -119,11 +119,11 @@
 - [ ] 优化 Prompt 内容
 
 ### 3.3 PWA 配置与部署到 Vercel
-- [ ] 创建 manifest.json 文件
-- [ ] 配置 PWA 图标和启动画面
-- [ ] 实现 Service Worker（如需要）
-- [ ] 配置 standalone 模式
-- [ ] 测试 PWA 功能（离线访问、添加到主屏幕等）
+- [x] 创建 manifest.json 文件 - 已创建 app/manifest.ts 和 public/manifest.json
+- [ ] 配置 PWA 图标和启动画面 - 需要用户添加图标文件（见 public/README-icons.md）
+- [ ] 实现 Service Worker（如需要）- 待实现
+- [x] 配置 standalone 模式 - 已在 manifest 中配置
+- [ ] 测试 PWA 功能（离线访问、添加到主屏幕等）- 需要图标文件后测试
 - [ ] 准备 Vercel 部署配置
 - [ ] 配置环境变量（Supabase, API Keys）
 - [ ] 部署到 Vercel
