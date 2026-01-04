@@ -1,5 +1,5 @@
 import { NextRequest } from 'next/server'
-import { experimental_streamText } from 'ai'
+import { streamText } from 'ai'
 import { createOpenAI } from '@ai-sdk/openai'
 import { retrieveRAGContext, formatRAGContext } from '@/lib/ai/rag-pipeline'
 import { createServerClient } from '@/lib/supabase/server'
@@ -127,7 +127,7 @@ Always provide clear, easy-to-understand explanations. Use citations [1], [2], e
     
     let result
     try {
-      result = await experimental_streamText({
+      result = await streamText({
         model: openai('gpt-4o'),
         system: fullSystemPrompt,
         messages: aiMessages,
