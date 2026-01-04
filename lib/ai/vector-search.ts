@@ -1,4 +1,4 @@
-import { createServerClient } from '@/lib/supabase/server'
+import { createServerClient } from '../supabase/server'
 import { generateEmbedding } from './embeddings'
 
 export interface SearchResult {
