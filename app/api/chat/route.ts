@@ -1,5 +1,5 @@
 import { NextRequest } from 'next/server'
-import { streamText } from 'ai'
+import { experimental_streamText } from 'ai'
 import { createAnthropic } from '@ai-sdk/anthropic'
 import { retrieveRAGContext, formatRAGContext } from '@/lib/ai/rag-pipeline'
 import { createServerClient } from '@/lib/supabase/server'
@@ -77,33 +77,28 @@ Always provide clear, easy-to-understand explanations. Use citations [1], [2], e
       ? formatRAGContext(ragContext, userQuery)
       : ''
 
-    // Prepare messages for AI (Claude supports system messages)
-    const aiMessages: Array<{
-      role: 'user' | 'assistant' | 'system'
-      content: string
-    }> = [
-      {
-        role: 'system',
-        content: systemPrompt + (contextText ? `\n\n${contextText}` : ''),
-      },
-      ...messages
-        .filter((msg: any) => msg.role === 'user' || msg.role === 'assistant')
-        .map((msg: any) => ({
-          role: msg.role === 'user' ? 'user' as const : 'assistant' as const,
-          content: msg.content,
-        })),
-    ]
+    // Prepare system prompt with context
+    const fullSystemPrompt = systemPrompt + (contextText ? `\n\n${contextText}` : '')
+
+    // Prepare messages for AI (experimental_streamText format)
+    const aiMessages = messages
+      .filter((msg: any) => msg.role === 'user' || msg.role === 'assistant')
+      .map((msg: any) => ({
+        role: msg.role === 'user' ? 'user' as const : 'assistant' as const,
+        content: msg.content,
+      }))
 
     // Stream response using Claude 3.5 Sonnet
-    const result = await streamText({
+    const result = await experimental_streamText({
       model: anthropic('claude-3-5-sonnet-20241022'),
+      system: fullSystemPrompt,
       messages: aiMessages,
       temperature: 0.7,
       maxTokens: 2000,
     })
 
     // Return streaming response with sources metadata
-    return result.toDataStreamResponse({
+    return result.toTextStreamResponse({
       headers: {
         'X-Sources': JSON.stringify(ragContext.sources),
       },

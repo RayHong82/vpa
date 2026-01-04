@@ -138,7 +138,10 @@ export function ChatInterface({ mode = "client" }: { mode?: "agent" | "client" }
             onKeyDown={(e) => {
               if (e.key === "Enter" && !e.shiftKey) {
                 e.preventDefault();
-                handleSubmit(e);
+                const form = e.currentTarget.closest('form');
+                if (form) {
+                  handleSubmit(e as any);
+                }
               }
             }}
             disabled={isLoading}

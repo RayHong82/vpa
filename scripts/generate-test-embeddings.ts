@@ -22,7 +22,7 @@ if (!process.env.OPENAI_API_KEY) {
 }
 
 async function main() {
-  const supabase = createClient(supabaseUrl, supabaseAnonKey)
+  const supabase = createClient(supabaseUrl as string, supabaseAnonKey as string)
   
   console.log('Fetching chunks without embeddings...')
   
