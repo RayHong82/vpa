@@ -10,23 +10,12 @@ const nextConfig: NextConfig = {
     },
   },
   // Ensure path aliases work in Vercel
-  webpack: (config, { dir }) => {
-    // Use the build directory as base, which is more reliable in Vercel
-    const projectRoot = path.resolve(dir || process.cwd())
-    
-    // Resolve path aliases - this is critical for Vercel builds
+  webpack: (config) => {
+    // Use path.join with __dirname for reliable path resolution
     config.resolve.alias = {
       ...config.resolve.alias,
-      '@': projectRoot,
+      '@': path.join(__dirname),
     }
-    
-    // Ensure proper module resolution
-    config.resolve.modules = [
-      projectRoot,
-      ...(Array.isArray(config.resolve.modules) ? config.resolve.modules : []),
-      'node_modules',
-    ]
-    
     return config
   },
 }
