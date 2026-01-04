@@ -1,0 +1,51 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 0 0% 0%;
+    --border: 0 0% 89.8%;
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 0 0% 0%;
+    --foreground: 0 0% 100%;
+    --border: 0 0% 14.9%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+}
+
+/* Apple-style frosted glass effect */
+@layer utilities {
+  .glass {
+    @apply backdrop-blur-xl bg-white/80 dark:bg-black/80;
+  }
+  
+  .glass-light {
+    @apply backdrop-blur-xl bg-white/60;
+  }
+  
+  .glass-dark {
+    @apply backdrop-blur-xl bg-black/60;
+  }
+}
+
+/* Smooth transitions for Apple-style interactions */
+@layer utilities {
+  .apple-interactive {
+    @apply transition-transform duration-150 active:scale-[0.98];
+  }
+}
+
