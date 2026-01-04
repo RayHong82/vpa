@@ -1,6 +1,6 @@
 import { NextRequest } from 'next/server'
 import { experimental_streamText } from 'ai'
-import { createAnthropic } from '@ai-sdk/anthropic'
+import { createOpenAI } from '@ai-sdk/openai'
 import { retrieveRAGContext, formatRAGContext } from '@/lib/ai/rag-pipeline'
 import { createServerClient } from '@/lib/supabase/server'
 
@@ -8,27 +8,27 @@ export const maxDuration = 30 // 30 seconds for streaming
 
 export async function POST(request: NextRequest) {
   try {
-    // Validate Anthropic API key
-    const anthropicApiKey = process.env.ANTHROPIC_API_KEY
-    if (!anthropicApiKey) {
-      console.error('ANTHROPIC_API_KEY is not set')
+    // Validate OpenAI API key
+    const openaiApiKey = process.env.OPENAI_API_KEY
+    if (!openaiApiKey) {
+      console.error('OPENAI_API_KEY is not set')
       return new Response(
-        JSON.stringify({ error: 'Anthropic API key is not configured' }),
+        JSON.stringify({ error: 'OpenAI API key is not configured' }),
         { status: 500, headers: { 'Content-Type': 'application/json' } }
       )
     }
     
-    // Validate API key format (Anthropic keys start with 'sk-ant-')
-    if (!anthropicApiKey.startsWith('sk-ant-')) {
-      console.error('Invalid ANTHROPIC_API_KEY format. Expected key starting with "sk-ant-", got:', anthropicApiKey.substring(0, 20) + '...')
+    // Validate API key format (OpenAI keys start with 'sk-')
+    if (!openaiApiKey.startsWith('sk-')) {
+      console.error('Invalid OPENAI_API_KEY format. Expected key starting with "sk-", got:', openaiApiKey.substring(0, 20) + '...')
       return new Response(
-        JSON.stringify({ error: 'Invalid Anthropic API key format. Please check your ANTHROPIC_API_KEY environment variable.' }),
+        JSON.stringify({ error: 'Invalid OpenAI API key format. Please check your OPENAI_API_KEY environment variable.' }),
         { status: 500, headers: { 'Content-Type': 'application/json' } }
       )
     }
 
-    const anthropic = createAnthropic({
-      apiKey: anthropicApiKey,
+    const openai = createOpenAI({
+      apiKey: openaiApiKey,
     })
 
     const body = await request.json()
@@ -122,21 +122,21 @@ Always provide clear, easy-to-understand explanations. Use citations [1], [2], e
         content: msg.content,
       }))
 
-    // Stream response using Claude 3.5 Sonnet
-    console.log('[Chat API] Calling Anthropic API:', { model: 'claude-3-5-sonnet-20241022', messageCount: aiMessages.length })
+    // Stream response using OpenAI GPT-4 Turbo
+    console.log('[Chat API] Calling OpenAI API:', { model: 'gpt-4-turbo-preview', messageCount: aiMessages.length })
     
     let result
     try {
       result = await experimental_streamText({
-        model: anthropic('claude-3-5-sonnet-20241022'),
+        model: openai('gpt-4-turbo-preview'),
         system: fullSystemPrompt,
         messages: aiMessages,
         temperature: 0.7,
         maxTokens: 2000,
       })
-      console.log('[Chat API] Anthropic API call successful')
+      console.log('[Chat API] OpenAI API call successful')
     } catch (error: any) {
-      console.error('[Chat API] Anthropic API error:', {
+      console.error('[Chat API] OpenAI API error:', {
         message: error.message,
         status: error.status,
         code: error.code,
