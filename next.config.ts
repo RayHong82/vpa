@@ -9,21 +9,14 @@ const nextConfig: NextConfig = {
       bodySizeLimit: '2mb',
     },
   },
-  // Ensure path aliases work in Vercel - use absolute path resolution
-  webpack: (config, { defaultLoaders }) => {
-    const projectRoot = __dirname
+  // Ensure path aliases work in Vercel
+  webpack: (config) => {
+    // Use process.cwd() which is more reliable in Vercel build environment
+    const projectRoot = path.resolve(process.cwd())
     
-    // Override alias to ensure it works in Vercel
     config.resolve.alias = {
       ...config.resolve.alias,
       '@': projectRoot,
-    }
-    
-    // Add project root to module resolution
-    if (Array.isArray(config.resolve.modules)) {
-      config.resolve.modules = [projectRoot, ...config.resolve.modules]
-    } else {
-      config.resolve.modules = [projectRoot, 'node_modules']
     }
     
     return config
