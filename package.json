@@ -13,7 +13,7 @@
     "react-dom": "^18.3.1",
     "next": "^15.0.0",
     "framer-motion": "^11.0.0",
-    "nuqs": "^1.19.0",
+    "nuqs": "^2.0.0",
     "@radix-ui/react-slot": "^1.0.2",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
