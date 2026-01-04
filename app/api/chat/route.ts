@@ -48,9 +48,11 @@ export async function POST(request: NextRequest) {
     }
 
     // Retrieve RAG context
+    // Scraping is optional - if JINA_API_KEY is not set, it will be disabled automatically
+    const enableScraping = !!process.env.JINA_API_KEY
     const ragContext = await retrieveRAGContext(userQuery, {
       teamId,
-      enableScraping: true,
+      enableScraping,
     })
 
     // Build system prompt based on mode
@@ -72,7 +74,7 @@ Always provide clear, easy-to-understand explanations. Use citations [1], [2], e
 
     // Format RAG context
     const contextText = ragContext.sources.length > 0
-      ? formatRAGContext(ragContext)
+      ? formatRAGContext(ragContext, userQuery)
       : ''
 
     // Prepare messages for AI (Claude supports system messages)

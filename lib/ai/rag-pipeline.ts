@@ -75,10 +75,13 @@ export async function retrieveRAGContext(
     teamId,
   })
 
-  // Step 2: Check if policy-related and scrape if needed
+  // Step 2: Check if policy-related and scrape if needed (optional)
   let scrapedContent: { url: string; content: string } | undefined
 
-  if (enableScraping && isPolicyQuery(query)) {
+  // Only attempt scraping if enabled AND Jina API key is available
+  const hasJinaKey = !!process.env.JINA_API_KEY
+  
+  if (enableScraping && hasJinaKey && isPolicyQuery(query)) {
     // Extract URLs from query
     const urls = extractUrls(query)
 
@@ -96,10 +99,14 @@ export async function retrieveRAGContext(
           }
         } catch (error) {
           console.error('Failed to scrape URL:', error)
-          // Continue without scraped content
+          // Continue without scraped content - LLM will use knowledge base
         }
       }
     }
+  } else if (enableScraping && !hasJinaKey && isPolicyQuery(query)) {
+    // If Jina is not configured but query is policy-related, 
+    // we'll rely on LLM's knowledge and vector database
+    console.log('Jina Reader not configured, using LLM knowledge and vector database only')
   }
 
   // Step 3: Build sources list with citations
@@ -136,12 +143,11 @@ export async function retrieveRAGContext(
 /**
  * Format RAG context for AI prompt
  */
-export function formatRAGContext(context: RAGContext): string {
-  let prompt = '## Relevant Context:\n\n'
+export function formatRAGContext(context: RAGContext, query: string): string {
+  let prompt = '## Relevant Context from Knowledge Base:\n\n'
 
   // Add knowledge base results
   if (context.knowledgeBaseResults.length > 0) {
-    prompt += '### Knowledge Base:\n\n'
     context.knowledgeBaseResults.forEach((result, index) => {
       prompt += `[${index + 1}] ${result.content}\n`
       if (result.metadata.source_url) {
@@ -149,9 +155,11 @@ export function formatRAGContext(context: RAGContext): string {
       }
       prompt += '\n'
     })
+  } else {
+    prompt += 'No specific matches found in knowledge base.\n\n'
   }
 
-  // Add scraped content
+  // Add scraped content if available
   if (context.scrapedContent) {
     prompt += '### Latest Information from Government Website:\n\n'
     prompt += `${context.scrapedContent.content}\n`
@@ -160,8 +168,19 @@ export function formatRAGContext(context: RAGContext): string {
 
   prompt += '\n## Instructions:\n'
   prompt += 'Please answer the user\'s question using the context above. '
+  
+  // Enhanced instructions for LLM-only mode
+  if (!context.scrapedContent && isPolicyQuery(query)) {
+    prompt += '\n'
+    prompt += 'Note: The user is asking about policies or procedures. '
+    prompt += 'If the knowledge base context is limited, you may use your training knowledge '
+    prompt += 'about Singapore property regulations, but clearly indicate when you are doing so. '
+    prompt += 'Always prioritize information from the knowledge base context when available.\n'
+  }
+  
   prompt += 'When referencing information, use citations like [1], [2], etc. '
-  prompt += 'corresponding to the numbered sources above.\n\n'
+  prompt += 'corresponding to the numbered sources above. '
+  prompt += 'If you use general knowledge not in the context, mention it clearly.\n\n'
 
   return prompt
 }
