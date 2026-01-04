@@ -1,8 +1,8 @@
 import { NextRequest } from 'next/server'
 import { experimental_streamText } from 'ai'
 import { createAnthropic } from '@ai-sdk/anthropic'
-import { retrieveRAGContext, formatRAGContext } from '@/lib/ai/rag-pipeline'
-import { createServerClient } from '@/lib/supabase'
+import { retrieveRAGContext, formatRAGContext } from '../../../lib/ai/rag-pipeline'
+import { createServerClient } from '../../../lib/supabase/server'
 
 const anthropic = createAnthropic({
   apiKey: process.env.ANTHROPIC_API_KEY,

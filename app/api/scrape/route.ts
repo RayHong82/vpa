@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { scrapeWithJina, isGovernmentWebsite } from '@/lib/ai/scraper'
+import { scrapeWithJina, isGovernmentWebsite } from '../../../lib/ai/scraper'
 
 export async function GET(request: NextRequest) {
   try {
