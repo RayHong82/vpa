@@ -9,13 +9,23 @@ const nextConfig: NextConfig = {
       bodySizeLimit: '2mb',
     },
   },
-  // Ensure path aliases work in Vercel
-  webpack: (config) => {
-    // Use path.join with __dirname for reliable path resolution
+  // Ensure path aliases work in Vercel - use absolute path resolution
+  webpack: (config, { defaultLoaders }) => {
+    const projectRoot = __dirname
+    
+    // Override alias to ensure it works in Vercel
     config.resolve.alias = {
       ...config.resolve.alias,
-      '@': path.join(__dirname),
+      '@': projectRoot,
     }
+    
+    // Add project root to module resolution
+    if (Array.isArray(config.resolve.modules)) {
+      config.resolve.modules = [projectRoot, ...config.resolve.modules]
+    } else {
+      config.resolve.modules = [projectRoot, 'node_modules']
+    }
+    
     return config
   },
 }
