@@ -123,12 +123,12 @@ Always provide clear, easy-to-understand explanations. Use citations [1], [2], e
       }))
 
     // Stream response using OpenAI GPT-4 Turbo
-    console.log('[Chat API] Calling OpenAI API:', { model: 'gpt-4-turbo-preview', messageCount: aiMessages.length })
+    console.log('[Chat API] Calling OpenAI API:', { model: 'gpt-4o', messageCount: aiMessages.length })
     
     let result
     try {
       result = await experimental_streamText({
-        model: openai('gpt-4-turbo-preview'),
+        model: openai('gpt-4o'),
         system: fullSystemPrompt,
         messages: aiMessages,
         temperature: 0.7,
