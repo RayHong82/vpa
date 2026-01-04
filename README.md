@@ -24,9 +24,19 @@ AI-powered Singapore property transaction assistant built with Next.js 15, Tailw
 npm install
 ```
 
-2. Create a `.env.local` file (see `.env.local.example` for reference)
+2. Create a `.env.local` file with your Supabase credentials:
+```bash
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+```
 
-3. Run the development server:
+3. Set up the Supabase database:
+   - Go to your Supabase project dashboard
+   - Navigate to SQL Editor
+   - Run the migration files in `supabase/migrations/` in order
+   - See `supabase/README.md` for detailed instructions
+
+4. Run the development server:
 ```bash
 npm run dev
 ```
@@ -47,6 +57,9 @@ vpa/
 │   ├── layout/            # Layout components (TopNav, BottomDock)
 │   └── ui/                # Shadcn UI components
 ├── lib/                   # Utility functions
+│   └── supabase/         # Supabase client configuration
+├── supabase/
+│   └── migrations/        # Database migration files
 └── public/                # Static assets
 ```
 
@@ -67,6 +80,7 @@ See `public/README-icons.md` for details.
 - **UI Components**: Shadcn/UI
 - **Icons**: Lucide React
 - **State Management**: Nuqs (URL-based state)
+- **Backend**: Supabase (PostgreSQL + pgvector + Auth)
 
 ## Development
 
