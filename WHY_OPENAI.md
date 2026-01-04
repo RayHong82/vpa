@@ -43,30 +43,33 @@
 
 1. **代码更改**
    - ✅ 替换 `createAnthropic` → `createOpenAI`
-   - ✅ 替换模型 `claude-3-5-sonnet-20241022` → `gpt-4-turbo-preview`
-   - ✅ 更新 API key 验证逻辑
+   - ✅ 替换模型 `claude-3-5-sonnet-20241022` → `gpt-4o`
+   - ✅ 替换 `experimental_streamText` → `streamText`
+   - ✅ 更新 API key 验证逻辑（从 `sk-ant-` 改为 `sk-`）
    - ✅ 更新日志信息
 
 2. **依赖更新**
-   - ✅ 添加 `@ai-sdk/openai` 包
+   - ✅ 添加 `@ai-sdk/openai@^3.0.2` 包
+   - ✅ 更新 `ai` SDK 到最新版本
    - ✅ 保留 `@ai-sdk/anthropic`（可选，用于未来切换）
 
 3. **环境变量**
    - ✅ 现在只需要 `OPENAI_API_KEY`（用于 Chat 和 Embeddings）
-   - ⚠️ `ANTHROPIC_API_KEY` 不再需要（可以删除）
+   - ⚠️ `ANTHROPIC_API_KEY` 不再需要（可以在 Vercel 中删除）
 
 ### 模型选择
 
-**当前使用**: `gpt-4-turbo-preview`
-- 支持 128k 上下文
-- 流式响应
-- 系统提示词
-- 性能优秀
+**当前使用**: `gpt-4o`
+- ✅ 最新、最快的 GPT-4 模型
+- ✅ 支持 128k 上下文
+- ✅ 流式响应
+- ✅ 系统提示词
+- ✅ 成本更低，性能更好
 
 **其他可选模型**:
-- `gpt-4o` - 最新模型，更快更便宜
+- `gpt-4-turbo` - GPT-4 Turbo 版本
 - `gpt-4` - 标准版本
-- `gpt-3.5-turbo` - 更经济的选择
+- `gpt-3.5-turbo` - 更经济的选择（适合简单查询）
 
 ### 功能保持
 
