@@ -133,7 +133,7 @@ Always provide clear, easy-to-understand explanations. Use citations [1], [2], e
         messages: aiMessages,
         temperature: 0.7,
         maxTokens: 2000,
-      })
+      } as any)
       console.log('[Chat API] OpenAI API call successful')
     } catch (error: any) {
       console.error('[Chat API] OpenAI API error:', {
