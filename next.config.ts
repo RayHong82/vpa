@@ -12,13 +12,21 @@ const nextConfig: NextConfig = {
   // Critical: Configure webpack to resolve @ alias for Vercel
   webpack: (config, { dir }) => {
     // Use dir parameter which is the project root in Vercel builds
-    const projectRoot = dir || path.resolve(process.cwd())
+    const projectRoot = path.resolve(dir || process.cwd())
     
     // Override alias - must be absolute path
     config.resolve = config.resolve || {}
     config.resolve.alias = {
       ...config.resolve.alias,
       '@': projectRoot,
+    }
+    
+    // Add project root to modules resolution
+    if (!config.resolve.modules) {
+      config.resolve.modules = []
+    }
+    if (!config.resolve.modules.includes(projectRoot)) {
+      config.resolve.modules.unshift(projectRoot)
     }
     
     return config
