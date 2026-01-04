@@ -4,16 +4,37 @@ import { createAnthropic } from '@ai-sdk/anthropic'
 import { retrieveRAGContext, formatRAGContext } from '@/lib/ai/rag-pipeline'
 import { createServerClient } from '@/lib/supabase/server'
 
-const anthropic = createAnthropic({
-  apiKey: process.env.ANTHROPIC_API_KEY,
-})
-
 export const maxDuration = 30 // 30 seconds for streaming
 
 export async function POST(request: NextRequest) {
   try {
+    // Validate Anthropic API key
+    const anthropicApiKey = process.env.ANTHROPIC_API_KEY
+    if (!anthropicApiKey) {
+      console.error('ANTHROPIC_API_KEY is not set')
+      return new Response(
+        JSON.stringify({ error: 'Anthropic API key is not configured' }),
+        { status: 500, headers: { 'Content-Type': 'application/json' } }
+      )
+    }
+    
+    // Validate API key format (Anthropic keys start with 'sk-ant-')
+    if (!anthropicApiKey.startsWith('sk-ant-')) {
+      console.error('Invalid ANTHROPIC_API_KEY format. Expected key starting with "sk-ant-", got:', anthropicApiKey.substring(0, 20) + '...')
+      return new Response(
+        JSON.stringify({ error: 'Invalid Anthropic API key format. Please check your ANTHROPIC_API_KEY environment variable.' }),
+        { status: 500, headers: { 'Content-Type': 'application/json' } }
+      )
+    }
+
+    const anthropic = createAnthropic({
+      apiKey: anthropicApiKey,
+    })
+
     const body = await request.json()
     const { messages, mode = 'client' } = body
+    
+    console.log('[Chat API] Request received:', { mode, messageCount: messages?.length })
 
     if (!messages || !Array.isArray(messages) || messages.length === 0) {
       return new Response('Messages array is required', { status: 400 })
@@ -50,10 +71,23 @@ export async function POST(request: NextRequest) {
     // Retrieve RAG context
     // Scraping is optional - if JINA_API_KEY is not set, it will be disabled automatically
     const enableScraping = !!process.env.JINA_API_KEY
-    const ragContext = await retrieveRAGContext(userQuery, {
-      teamId,
-      enableScraping,
-    })
+    console.log('[Chat API] Retrieving RAG context:', { userQuery, teamId, enableScraping })
+    
+    let ragContext
+    try {
+      ragContext = await retrieveRAGContext(userQuery, {
+        teamId,
+        enableScraping,
+      })
+      console.log('[Chat API] RAG context retrieved:', { sourcesCount: ragContext.sources.length, kbResultsCount: ragContext.knowledgeBaseResults.length })
+    } catch (error) {
+      console.error('[Chat API] Error retrieving RAG context:', error)
+      // Continue with empty context if RAG fails
+      ragContext = {
+        knowledgeBaseResults: [],
+        sources: [],
+      }
+    }
 
     // Build system prompt based on mode
     const systemPrompt = mode === 'agent'
@@ -89,13 +123,27 @@ Always provide clear, easy-to-understand explanations. Use citations [1], [2], e
       }))
 
     // Stream response using Claude 3.5 Sonnet
-    const result = await experimental_streamText({
-      model: anthropic('claude-3-5-sonnet-20241022'),
-      system: fullSystemPrompt,
-      messages: aiMessages,
-      temperature: 0.7,
-      maxTokens: 2000,
-    })
+    console.log('[Chat API] Calling Anthropic API:', { model: 'claude-3-5-sonnet-20241022', messageCount: aiMessages.length })
+    
+    let result
+    try {
+      result = await experimental_streamText({
+        model: anthropic('claude-3-5-sonnet-20241022'),
+        system: fullSystemPrompt,
+        messages: aiMessages,
+        temperature: 0.7,
+        maxTokens: 2000,
+      })
+      console.log('[Chat API] Anthropic API call successful')
+    } catch (error: any) {
+      console.error('[Chat API] Anthropic API error:', {
+        message: error.message,
+        status: error.status,
+        code: error.code,
+        type: error.type,
+      })
+      throw error
+    }
 
     // Return streaming response with sources metadata
     return result.toTextStreamResponse({
@@ -104,9 +152,22 @@ Always provide clear, easy-to-understand explanations. Use citations [1], [2], e
       },
     })
   } catch (error: any) {
-    console.error('Chat API error:', error)
+    console.error('[Chat API] Error:', {
+      message: error.message,
+      status: error.status,
+      code: error.code,
+      type: error.type,
+      cause: error.cause?.message,
+      stack: error.stack?.split('\n').slice(0, 5).join('\n'),
+    })
+    
+    // Return user-friendly error message
+    const errorMessage = error.message?.includes('API key') 
+      ? 'API configuration error. Please check server logs.'
+      : error.message || 'Internal server error'
+    
     return new Response(
-      JSON.stringify({ error: error.message || 'Internal server error' }),
+      JSON.stringify({ error: errorMessage }),
       {
         status: 500,
         headers: { 'Content-Type': 'application/json' },
